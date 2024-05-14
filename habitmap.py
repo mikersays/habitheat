@@ -1,14 +1,18 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 from datetime import datetime, timedelta
+import os
 
 # Initialize or load data
 def load_data(filename):
-    try:
+    if os.path.exists(filename) and os.path.getsize(filename) > 0:
         return pd.read_csv(filename, index_col='date', parse_dates=True)
-    except FileNotFoundError:
-        # Start a new DataFrame if none exists
-        return pd.DataFrame({'count': []}, index=pd.to_datetime([]))
+    else:
+        # Start a new DataFrame if none exists or if it's empty
+        new_df = pd.DataFrame({'count': []})
+        new_df.index.name = 'date'
+        return new_df
 
 # Save data back to CSV
 def save_data(df, filename):
@@ -51,7 +55,8 @@ filename = 'habits.csv'
 df = load_data(filename)
 
 # Update your habits here
-df = add_update_habit(df, pd.Timestamp('2024-05-13'), 1)  # Log today's activity
+today = pd.Timestamp.today().normalize()  # Normalize to remove time part
+df = add_update_habit(df, today, 1)  # Log today's activity
 
 save_data(df, filename)
-plot_heatmap(df, 2024)
+plot_heatmap(df, today.year)
