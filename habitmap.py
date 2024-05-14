@@ -1,22 +1,25 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 from datetime import datetime, timedelta
 import os
 
 # Initialize or load data
 def load_data(filename):
     if os.path.exists(filename) and os.path.getsize(filename) > 0:
-        return pd.read_csv(filename, index_col='date', parse_dates=True)
+        df = pd.read_csv(filename, parse_dates=True)
+        df['date'] = pd.to_datetime(df['date'])  # Ensure 'date' is datetime type
+        df.set_index('date', inplace=True)
+        return df
     else:
         # Start a new DataFrame if none exists or if it's empty
         new_df = pd.DataFrame({'count': []})
         new_df.index.name = 'date'
+        new_df.index = pd.to_datetime(new_df.index)  # Ensure index is datetime type
         return new_df
 
 # Save data back to CSV
 def save_data(df, filename):
-    df.to_csv(filename)
+    df.reset_index().to_csv(filename, index=False)
 
 # Add or update a habit
 def add_update_habit(df, date, count):
