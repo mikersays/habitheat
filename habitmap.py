@@ -1,6 +1,5 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 from datetime import datetime, timedelta
 
 # Initialize or load data
@@ -35,7 +34,7 @@ def plot_heatmap(df, year):
     data['week_of_year'] = data.index.isocalendar().week
     
     # Pivot for heatmap format
-    pivot = data.pivot("week_of_year", "day_of_week", "count")
+    pivot = data.pivot(index="week_of_year", columns="day_of_week", values="count")
     
     # Plotting
     plt.figure(figsize=(12, 3))
